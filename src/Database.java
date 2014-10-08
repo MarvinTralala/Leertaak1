@@ -13,7 +13,7 @@ public class Database {
 	private static int idStation;
 	private static int temperatuur, dauwpunt, luchtdruk, zichtbaarheid;
 	private static int neerslag, sneeuwdiepte, bewolking, windrichting, windsnelheid, gebeurtenissen;
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+	SimpleDateFormat date = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 	// driver door db
 	private static driver = "com.mysql.jdbc.Driver";
 	
