@@ -7,9 +7,9 @@ import java.sql.*;
  * Created by Marvin on 7-10-2014.
  */
 public class Database {
-        //maakt connectie met de database
+    //maakt connectie met de database
 	private static Connection conn = null;
-	private static String username = "", password = "", name="", latitude="", longitud="", country="";
+	private static String username = "", password = "", stn ="", name="", latitude="", longitude="", country="", timezone="";
 	private static int idStation;
 	private static int temperatuur, dauwpunt, luchtdruk, zichtbaarheid;
 	private static int neerslag, sneeuwdiepte, bewolking, windrichting, windsnelheid, gebeurtenissen;
@@ -37,9 +37,9 @@ public class Database {
     	connect();
     try {
     	// create a statement
-    	Statement stmt = conn.createStatement();
+    	Statement s = conn.createStatement();
     	//insert
-    	stmt.executeUpdate("Insert query");
+    	s.executeUpdate("INSERT INTO Data (STN) VALUES ('') );
     } catch (Exception e) {
     	system.out.println(e);
     } finally {
