@@ -7,9 +7,9 @@ import java.sql.*;
  * Created by Marvin on 7-10-2014.
  */
 public class Database {
-    //maakt connectie met de database
+        //maakt connectie met de database
 	private static Connection conn = null;
-	private static String username = "", password = "";
+	private static String username = "", password = "", name="", latitude="", longitud="", country="";
 	private static int idStation;
 	private static int temperatuur, dauwpunt, luchtdruk, zichtbaarheid;
 	private static int neerslag, sneeuwdiepte, bewolking, windrichting, windsnelheid, gebeurtenissen;
