@@ -6,17 +6,6 @@ import com.mysql.jdbc.Connection;
 
 public class Database {
 	
-	/*
-	 * TODO before running app
-	 * 1. import library mysql-connector/j (jar file found on mysql.org)
-	 * 2. import unwdmi.sql to database
-	 * 3. create user using the following statements in mysql
-	 * 		CREATE USER 'unwdmi'@'localhost' IDENTIFIED BY 'unwdmi';
-	 * 		GRANT ALL PRIVILEGES ON unwdmi.* TO 'unwdmi'@'localhost';
-	 * 		FLUSH PRIVILEGES;
-	 * 4. run app! :)
-	 */
-	
 	private final String DATABASE = "unwdmi";
 	private final String USERNAME = "unwdmi";
 	private final String PASSWORD = "unwdmi";

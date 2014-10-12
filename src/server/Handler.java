@@ -34,13 +34,16 @@ public class Handler extends Thread {
 	public void run() {
 		while(true) {
 			try{
+				//Queue acts as a buffer for when the data is not handled quick enough
 				String xml = que.take();
 				
+				//Built XML document
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				Document doc = dBuilder.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("utf-8"))));
 				doc.getDocumentElement().normalize();
 				
+				//get all nodes
 				NodeList nList = doc.getElementsByTagName("MEASUREMENT");
 				
 				// Iterate through the nodes of the provided XML. Thusly instantiating
@@ -136,7 +139,7 @@ public class Handler extends Thread {
 						//add the corrected measurement to history
 						history.addToHistory(corrected);
 						
-						//add new measurementvalues to the database
+						//add new measurement values to the database
 						db.insertMeasurement(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir);
 					}
 				}

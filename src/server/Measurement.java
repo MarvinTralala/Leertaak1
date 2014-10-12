@@ -6,6 +6,23 @@ public class Measurement {
 	String date = null, time = null, frshtt;
 	double temp, dewp, stp, slp, visib, wdsp, prcp, sndp, cldc;
 	
+	/**
+	 * Creates measurement object
+	 * @param stn
+	 * @param date
+	 * @param time
+	 * @param temp
+	 * @param dewp
+	 * @param stp
+	 * @param slp
+	 * @param visib
+	 * @param wdsp
+	 * @param prcp
+	 * @param sndp
+	 * @param frshtt
+	 * @param cldc
+	 * @param wnddir
+	 */
 	public Measurement(int stn, String date, String time, double temp, double dewp, double stp, double slp, double visib, double wdsp, double prcp, double sndp, String frshtt, double cldc, int wnddir) {
 		this.stn = stn;
 		this.date = date;
@@ -23,6 +40,9 @@ public class Measurement {
 		this.wnddir = wnddir;
 	}
 	
+	/*
+	 * Getters
+	 */
 	public int getStn() { return stn; }
 	
 	public String getDate() { return  date;	}
@@ -51,6 +71,9 @@ public class Measurement {
 	
 	public int getWnddir() { return wnddir; }
 	
+	/*
+	 * setters
+	 */
 	public void setTemp(double temp) {
 		this.temp = temp;
 	}

@@ -14,10 +14,12 @@ public class Corrector {
 	}
 	
 	public Measurement correctMeasurement(Measurement m) {
+		//get the historic measurement objects for this station number only
 		historyOfStation = history.getMeasurementsByID(m.getStn());
 		stnHistorySize = historyOfStation.size();
 		
 		if (stnHistorySize > 1) {
+			//correct data based on the history of this station
 			m.setTemp(correctTemp(m.getTemp()));
 			m.setDewp(correctDewp(m.getDewp()));
 			m.setStp(correctStp(m.getStp()));
@@ -31,6 +33,9 @@ public class Corrector {
 		return m;
 	}
 	
+	/*
+	 * correction methods
+	 */
 	private double correctTemp(double value) {
 		double[] tempList= new double[stnHistorySize];
 		
@@ -139,14 +144,19 @@ public class Corrector {
 		return correctData(value, getAverage(tempList));
 	}
 	
+	/*
+	 * Determine deviation of the new value based on the average of historic values
+	 */
 	private double correctData(double data, double average) {
 		if (data == 0 || data > (average * 1.2) || data < (average * 0.8)) {
 			data = average;
 		}
-		
 		return data;
 	}
 	
+	/*
+	 * Compute an average value
+	 */
 	private double getAverage(double[] numbers) {
 		double total = 0;
 		int count = numbers.length;
@@ -154,7 +164,6 @@ public class Corrector {
 		for(int i=0; i<count; i++) {
 			total += numbers[i];
 		}
-		
 		return (double)Math.round((total / count) * 10) / 10;
 	}
 }
