@@ -50,4 +50,41 @@ public class Measurement {
 	public double getCldc() { return cldc; }
 	
 	public int getWnddir() { return wnddir; }
+	
+	public void setTemp(double temp) {
+		this.temp = temp;
+	}
+	
+	public void setDewp(double dewp) {
+		this.dewp = dewp;
+	}
+	
+	public void setStp(double stp) {
+		this.stp = stp;
+	}
+	
+	public void setSlp(double slp) {
+		this.slp = slp;
+	}
+	
+	public void setVisib(double visib) {
+		this.visib = visib;
+	}
+
+	public void setWdsp(double wdsp) {
+		this.wdsp = wdsp;
+	}
+	
+	public void setPrcp(double prcp) {
+		this.prcp = prcp;
+	}
+	
+	public void setSndp(double sndp) {
+		this.sndp = sndp;
+	}
+	
+	public void setCldc(double cldc) {
+		this.cldc = cldc;
+	}
+	
 }

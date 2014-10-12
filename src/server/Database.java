@@ -53,6 +53,7 @@ public class Database {
 					+ "VALUES (" + stn + ", '" + date + "', '" + time + "', " + temp + ", " + dewp + ", " + stp + ", " + slp + ", " + visib + ", " + wdsp + ", " + prcp + ", " + sndp + ", '" + frshtt + "', " + cldc + ", " + wnddir + ")");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("values " + stn + " " + date + " " + time + " " + temp + " " + dewp + " " + stp + " " + slp + " " + visib + " " + wdsp + " " + prcp + " " + sndp + " " + frshtt + " " + cldc + " " + wnddir);
 		}
 		
 	}

@@ -17,7 +17,7 @@ public class Worker extends Thread {
 		this.que = new ArrayBlockingQueue<String>(100);
 		
 		// note: handling the documentparsing on a new thread allows this thread to continue listening to new messages
-		new Thread(new DOMParser(que)).start();
+		new Thread(new Handler(que)).start();
 		
 		//make a notice of the thread starting
 		System.out.println("Worker " + id + " started.");
