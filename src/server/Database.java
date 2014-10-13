@@ -1,6 +1,10 @@
 package server;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.mysql.jdbc.Connection;
 
@@ -25,7 +29,7 @@ public class Database {
 		}
 		
 		try {
-			//try to make a connoction with the database using config data on top of this page
+			//try to make a connection with the database using config-data on top of this page
 			Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/" + DATABASE + "?user=" + USERNAME + "&password=" + PASSWORD);
 			return conn;
 		} catch (SQLException e) {
@@ -47,14 +51,33 @@ public class Database {
 		
 	}
 	
-	public void disconnect() {
+	public ResultSet getAssignmentQuery(String query) {
 		try {
-			//make sure the connection can be closed again
-			System.out.println("Database connection closed");
-			conn.close();
+			Statement s = conn.createStatement();
+			ResultSet rs = s.executeQuery(query);
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int count = 0;
+			int columnsNumber = rsmd.getColumnCount();
+		    while (rs.next()) {
+		        for (int i = 1; i <= columnsNumber; i++) {
+		            if (i > 1) System.out.print(",  ");
+		            String columnValue = rs.getString(i);
+		            System.out.print(columnValue + " " + rsmd.getColumnName(i));
+		        }
+		        count++;
+		        System.out.println("");
+		    }
+		    System.out.println("Total number of rows: " + count);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	public void disconnect() {
+		//make sure the connection can be closed again
+		System.out.println("Database connection closed");
+		//conn.close();
 	}
 
 }
