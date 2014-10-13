@@ -51,7 +51,7 @@ public class Database {
 		
 	}
 	
-	public ResultSet getAssignmentQuery(String query) {
+	public void executeAndPrintResultsOfSelectStatement(String query) {
 		try {
 			Statement s = conn.createStatement();
 			ResultSet rs = s.executeQuery(query);
@@ -71,7 +71,6 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
 	}
 	
 	public void disconnect() {

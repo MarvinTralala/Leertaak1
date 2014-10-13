@@ -10,7 +10,7 @@ public class History {
 		measurements = new ArrayList<Measurement>();
 	}
 	
-	public void addToHistory(Measurement m) {
+	public void addMeasurement(Measurement m) {
 		if (measurements.size() == 300) {
 			measurements.remove(0);
 		}

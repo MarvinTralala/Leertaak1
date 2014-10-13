@@ -57,18 +57,20 @@ public class Commander {
 	
 	private void executeQuery() {
 		Database db = new Database();
-		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT ");
-		sb.append("m.stn, date, time, country ");
-		sb.append("FROM ");
-		sb.append("`measurements` m ");
-		sb.append("INNER JOIN `stations` s ON s.stn = m.stn ");
-		sb.append("WHERE ");
-		sb.append("date >= DATE_SUB(NOW(), INTERVAL 2 DAY) ");
-		sb.append("AND time >= NOW() ");
-		sb.append("AND s.country = 'NORWAY' ");
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT ");
+		query.append("m.stn, date, time, country ");
+		query.append("FROM ");
+		query.append("`measurements` m ");
+		query.append("INNER JOIN `stations` s ON s.stn = m.stn ");
+		query.append("WHERE ");
+		query.append("date >= DATE_SUB(NOW(), INTERVAL 2 DAY) ");
+		query.append("AND time >= NOW() ");
+		query.append("AND s.country = 'NORWAY' ");
 		
-		db.getAssignmentQuery(sb.toString());
-		System.out.println("Query: " + sb.toString());
+		db.executeAndPrintResultsOfSelectStatement(query.toString());
+		db.disconnect();
+		
+		System.out.println("Query: " + query.toString());
 	}
 }

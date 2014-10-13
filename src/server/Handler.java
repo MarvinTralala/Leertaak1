@@ -138,7 +138,7 @@ public class Handler extends Thread {
 						wnddir = corrected.getWnddir();
 						
 						//add the corrected measurement to history
-						history.addToHistory(corrected);
+						history.addMeasurement(corrected);
 						
 						//add new measurement values to the database
 						db.insertMeasurement(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir);
