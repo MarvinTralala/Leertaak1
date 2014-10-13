@@ -15,9 +15,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
 public class Handler extends Thread {
 	
+	boolean running;
 	BlockingQueue<String> que;
 	History history;
 	Corrector corrector;
@@ -25,6 +25,7 @@ public class Handler extends Thread {
 	
 	public Handler(BlockingQueue<String> que) {
 		this.que = que;
+		running = true;
 		history = new History();
 		corrector = new Corrector(history);
 		db = new Database();
@@ -32,7 +33,7 @@ public class Handler extends Thread {
 	
 	@Override
 	public void run() {
-		while(true) {
+		while(running) {
 			try{
 				//Queue acts as a buffer for when the data is not handled quick enough
 				String xml = que.take();
@@ -153,7 +154,12 @@ public class Handler extends Thread {
 				e.printStackTrace();
 			}
 		}
-			
+	}
+
+	public void stopExecuting() {
+		//when the feeding thread stops.
+		db.disconnect();
+		running = false;
 	}
 
 }

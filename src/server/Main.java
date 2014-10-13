@@ -29,7 +29,6 @@ public class Main {
 				new Thread(new Worker(s.accept(), i)).start();
 				i++;
 			}
-			
 			s.close();
 		} catch (IOException e) {
 			e.printStackTrace();

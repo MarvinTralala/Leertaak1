@@ -11,12 +11,17 @@ public class Worker extends Thread {
 	
 	Socket client;
 	BlockingQueue<String> que;
+	Handler handler;
+	int id;
 	
 	public Worker(Socket client, int id) {
+		this.id = id;
 		this.client = client;		
 		this.que = new ArrayBlockingQueue<String>(100);
 		
-		// note: handling the documentparsing on a new thread allows this thread to continue listening to new messages
+		handler = new Handler(que);
+		
+		//note: handling the document parsing on a new thread allows this thread to continue listening to new messages
 		new Thread(new Handler(que)).start();
 		
 		//make a notice of the thread starting
@@ -27,7 +32,7 @@ public class Worker extends Thread {
 	public void run() {
 		try {
 		  	BufferedReader bf = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		  	//before creating de document, we must seperate the incoming data in seperate xml 'files'
+		  	//before creating the document, we must separate the incoming data in separate XML 'files'
 		  	StringBuilder sb = new StringBuilder();
 		  	String stream;
 		  	
@@ -39,13 +44,18 @@ public class Worker extends Thread {
 					// passing the StringBuilder as a single String to the queue.
             		// using a queue allows the program to buffer information to send to the database
             		que.add(sb.toString());
-					
+            		
 					// Clear the contents of the StringBuilder to start over properly.
 					sb.delete(0, sb.length());
 				}
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
+        	System.out.println(id + " >> System can't handle the load! shutting down...");
+        	handler.stopExecuting();
+        } catch (NullPointerException e) {
+        	System.out.println(id + " >> Feed stopped! shutting down thread...");
+        	handler.stopExecuting();
         }
 	}
 }

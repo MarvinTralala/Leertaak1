@@ -29,7 +29,7 @@ public class Database {
 			Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/" + DATABASE + "?user=" + USERNAME + "&password=" + PASSWORD);
 			return conn;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			e.printStackTrace();			
 		}
 		return null;
 	}
@@ -50,6 +50,7 @@ public class Database {
 	public void disconnect() {
 		try {
 			//make sure the connection can be closed again
+			System.out.println("Database connection closed");
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
