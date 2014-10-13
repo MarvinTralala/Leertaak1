@@ -14,8 +14,6 @@ public class Main {
 	 * 4. run app! :)
 	 */
 	
-	public static boolean ServerStatus = true;
-	
 	public static void main(String[] args) {	
 		Commander command = new Commander();
 		command.read();	
