@@ -1,56 +1,84 @@
 package server;
 
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.net.UnknownHostException;
+//import java.sql.DriverManager;
+//import java.sql.ResultSet;
+//import java.sql.ResultSetMetaData;
+//import java.sql.SQLException;
+//import java.sql.Statement;
+//import java.util.Collection;
 
-import com.mysql.jdbc.Connection;
 
-public class Database {
+
+import java.util.LinkedList;
+
+import com.mongodb.*;
+
+public class Database implements Runnable{
 	
-	private final String DATABASE = "unwdmi";
-	private final String USERNAME = "unwdmi";
-	private final String PASSWORD = "unwdmi";
+	private MongoClient mongoClient;
+	private DB db;
+	private DBCollection collection;
 	
-	private Connection conn;
+	private LinkedList<BasicDBObject> queue;
 	
 	public Database() {
 		//when instantiating this class, immediately create a connection with the database.
-		this.conn = connect();
-	}
-	
-	private Connection connect() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		}
+			mongoClient = new MongoClient("localhost");		//connection with server
+			db = mongoClient.getDB("UNWDMI");				//create Database with name "UNWDMI"
+			collection = db.getCollection("measurements");	//create collections to insert into database
+			System.out.println("mongo database created");
+		} catch (UnknownHostException e) { e.printStackTrace();	}
 		
-		try {
-			//try to make a connection with the database using config-data on top of this page
-			Connection conn = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/" + DATABASE + "?user=" + USERNAME + "&password=" + PASSWORD);
-			return conn;
-		} catch (SQLException e) {
-			e.printStackTrace();			
-		}
-		return null;
+		System.out.println("table Measurement created");
+		//start a list for all object (measurements in the object) to put in database
+		queue = new LinkedList<BasicDBObject>();
 	}
 	
-	public void insertMeasurement(int stn, String date, String time, double temp, double dewp, double stp, double slp, double visib, double wdsp, double prcp, double sndp, String frshtt, double cldc, int wnddir) {
-		try {
-			//insert formatted data into the database
-			Statement s = conn.createStatement();
-			s.executeUpdate("INSERT INTO measurements (stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir) "
-					+ "VALUES (" + stn + ", '" + date + "', '" + time + "', " + temp + ", " + dewp + ", " + stp + ", " + slp + ", " + visib + ", " + wdsp + ", " + prcp + ", " + sndp + ", '" + frshtt + "', " + cldc + ", " + wnddir + ")");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("values " + stn + " " + date + " " + time + " " + temp + " " + dewp + " " + stp + " " + slp + " " + visib + " " + wdsp + " " + prcp + " " + sndp + " " + frshtt + " " + cldc + " " + wnddir);
-		}
+	/**
+	 * Get the corrected measurements and make an object to place in the queue
+	 */
+	public synchronized void insertMeasurementGetObject(int stn, String date, String time, double temp, double dewp, double stp, double slp, double visib, double wdsp, double prcp, double sndp, String frshtt, double cldc, int wnddir) {
 		
+		BasicDBObject doc = new BasicDBObject("stn",stn)
+				.append("date", date)
+				.append("time", time)
+				.append("temp", temp)
+				.append("dewp", dewp)
+				.append("stp", stp)
+				.append("slp", slp)
+				.append("visib", visib)
+				.append("wdsp", wdsp)
+				.append("prcp", prcp)
+				.append("sndp", sndp)
+				.append("frshtt", frshtt)
+				.append("cldc", cldc)
+				.append("wnddir", wnddir);
+		
+		queue.addLast(doc);  //adds the object in list for queue
 	}
 	
+	/**
+	 * Create an infinite loop thread
+	 * Checks in the queue for any objects to put in collection
+	 * Always stays in the while loop with the try-catch!!
+	 */
+	public void run(){
+		while(true){
+			try {
+				System.out.println("DB HANDLE -> " + collection.getCount()); //get count of measurements
+				while(!queue.isEmpty()) {
+					BasicDBObject object = queue.removeFirst();
+					collection.insert(object);
+				}
+			} catch(Exception e) {
+				System.out.println("---------------------------------------------------");
+			}
+		}
+	}
+	
+	/*
 	public void executeAndPrintResultsOfSelectStatement(String query) {
 		try {
 			Statement s = conn.createStatement();
@@ -71,12 +99,12 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-	}
+	}  */
 	
 	public void disconnect() {
 		//make sure the connection can be closed again
 		System.out.println("Database connection closed");
 		//conn.close();
-	}
+	}  
 
 }

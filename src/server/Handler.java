@@ -21,14 +21,14 @@ public class Handler extends Thread {
 	BlockingQueue<String> que;
 	History history;
 	Corrector corrector;
-	Database db;
+	Database database;
 	
-	public Handler(BlockingQueue<String> que) {
+	public Handler(BlockingQueue<String> que, Database dt) {
 		this.que = que;
 		running = true;
 		history = new History();
 		corrector = new Corrector(history);
-		db = new Database();
+		database = dt;
 	}
 	
 	@Override
@@ -39,9 +39,9 @@ public class Handler extends Thread {
 				String xml = que.take();
 				
 				//Built XML document
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				Document doc = dBuilder.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("utf-8"))));
+				DocumentBuilderFactory databaseThreadFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder databaseThreaduilder = databaseThreadFactory.newDocumentBuilder();
+				Document doc = databaseThreaduilder.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("utf-8"))));
 				doc.getDocumentElement().normalize();
 				
 				//get all nodes
@@ -140,8 +140,8 @@ public class Handler extends Thread {
 						//add the corrected measurement to history
 						history.addMeasurement(corrected);
 						
-						//add new measurement values to the database
-						db.insertMeasurement(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir);
+						//add new measurement values to the database queue
+						database.insertMeasurementGetObject(stn, date, time, temp, dewp, stp, slp, visib, wdsp, prcp, sndp, frshtt, cldc, wnddir);
 					}
 				}
 			} catch (ParserConfigurationException e) {
@@ -158,7 +158,7 @@ public class Handler extends Thread {
 
 	public void stopExecuting() {
 		//when the feeding thread stops.
-		db.disconnect();
+		database.disconnect();
 		running = false;
 	}
 

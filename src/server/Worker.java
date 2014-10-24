@@ -13,16 +13,15 @@ public class Worker extends Thread {
 	BlockingQueue<String> que;
 	Handler handler;
 	int id;
+
 	
-	public Worker(Socket client, int id) {
+	public Worker(Socket client, int id, Database dt) {
 		this.id = id;
 		this.client = client;		
 		this.que = new ArrayBlockingQueue<String>(100);
 		
-		handler = new Handler(que);
-		
 		//note: handling the document parsing on a new thread allows this thread to continue listening to new messages
-		new Thread(new Handler(que)).start();
+		new Thread(new Handler(que,dt)).start();
 		
 		//make a notice of the thread starting
 		System.out.println("Worker " + id + " started.");
