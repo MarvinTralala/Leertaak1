@@ -1,24 +1,16 @@
 package server;
 
 import java.net.UnknownHostException;
-//import java.sql.DriverManager;
-//import java.sql.ResultSet;
-//import java.sql.ResultSetMetaData;
-//import java.sql.SQLException;
-//import java.sql.Statement;
-//import java.util.Collection;
-
-
-
+import java.util.ArrayList;
 import java.util.LinkedList;
-
 import com.mongodb.*;
 
 public class Database implements Runnable{
 	
 	private MongoClient mongoClient;
 	private DB db;
-	private DBCollection collection;
+	private DBCollection measurements;
+	private DBCollection stations;
 	
 	private LinkedList<BasicDBObject> queue;
 	
@@ -27,11 +19,12 @@ public class Database implements Runnable{
 		try {
 			mongoClient = new MongoClient("localhost");		//connection with server
 			db = mongoClient.getDB("UNWDMI");				//create Database with name "UNWDMI"
-			collection = db.getCollection("measurements");	//create collections to insert into database
+			measurements = db.getCollection("measurements");	//create collection to insert into database
+			stations = db.getCollection("stations");
+			
 			System.out.println("mongo database created");
 		} catch (UnknownHostException e) { e.printStackTrace();	}
 		
-		System.out.println("table Measurement created");
 		//start a list for all object (measurements in the object) to put in database
 		queue = new LinkedList<BasicDBObject>();
 	}
@@ -61,45 +54,53 @@ public class Database implements Runnable{
 	
 	/**
 	 * Create an infinite loop thread
-	 * Checks in the queue for any objects to put in collection
+	 * Checks in the queue for any objects to put in measurements
 	 * Always stays in the while loop with the try-catch!!
 	 */
 	public void run(){
 		while(true){
-			try {
-				System.out.println("DB HANDLE -> " + collection.getCount()); //get count of measurements
-				while(!queue.isEmpty()) {
-					BasicDBObject object = queue.removeFirst();
-					collection.insert(object);
+			synchronized(this){
+				try {
+					while(!queue.isEmpty()) {
+						BasicDBObject object = queue.removeFirst();
+						measurements.insert(object);
+						System.out.println("Handled: " + measurements.getCount());
+					}
+				} catch(Exception e) {
+					System.out.println("---------------------------------------------------");
 				}
-			} catch(Exception e) {
-				System.out.println("---------------------------------------------------");
 			}
 		}
 	}
 	
-	/*
-	public void executeAndPrintResultsOfSelectStatement(String query) {
-		try {
-			Statement s = conn.createStatement();
-			ResultSet rs = s.executeQuery(query);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			int count = 0;
-			int columnsNumber = rsmd.getColumnCount();
-		    while (rs.next()) {
-		        for (int i = 1; i <= columnsNumber; i++) {
-		            if (i > 1) System.out.print(",  ");
-		            String columnValue = rs.getString(i);
-		            System.out.print(columnValue + " " + rsmd.getColumnName(i));
-		        }
-		        count++;
-		        System.out.println("");
-		    }
-		    System.out.println("Total number of rows: " + count);
-		} catch (SQLException e) {
-			e.printStackTrace();
+	/**
+	 * Execute query.
+	 * All the stations in Norway for a period of time
+	 */
+	public void executeQuery(){
+		
+		ArrayList<Integer> stationList = new ArrayList<Integer>();
+		DBCursor cursor = stations.find(new BasicDBObject("country", "KENYA"));
+		
+		while(cursor.hasNext()){
+			BasicDBObject station = (BasicDBObject)cursor.next();
+			stationList.add(station.getInt("stn"));
+			//System.out.println(cursor.next());
 		}
-	}  */
+		
+		System.out.println("Amount of stations = " + stationList.size());
+		
+		BasicDBObject timezone = new BasicDBObject("$lt", "2014-10-25")
+										.append("$gte", "2014-10-24");
+		BasicDBObject query = new BasicDBObject("date", timezone)
+										.append("stn", new BasicDBObject("$in", stationList));
+		DBCursor cursor2 = measurements.find(query);
+
+		while(cursor2.hasNext()){
+			System.out.println(cursor2.next());
+		}
+		System.out.println("Total measurements = " + cursor2.count());
+	} 
 	
 	public void disconnect() {
 		//make sure the connection can be closed again
