@@ -6,6 +6,9 @@ TODO BEFORE RUNNING THE UNWDMI APPLICATION!
 3. Run command line and go to the folder where mongo is downloaded too
 4. Type in :  mongod.exe --config (root of mongod.config) --install 
 	(make sure there is a path called \Data & \log in directory of mongodb)
+5. import the stations collection by running the following command: 
+	mongoimport.exe -d UNWDMI -c stations -file (directory of stations.csv) --type csv --headerline
+
 5. set a path for mongodb in commandline -> mongod.exe --dbpath (directory for path)
 6. Run the mongo application through commandline to open connection to the database
 
